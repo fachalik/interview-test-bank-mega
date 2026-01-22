@@ -52,7 +52,7 @@ export const creditsLeadsTable = mysqlTable(
 		status: varchar("status", { length: 30 }).notNull(), // e.g. 'pending', 'approved', 'rejected'
 		created_by: varchar("created_by", { length: 128 }).notNull(), // FK to userTable.id
 		approved_by: varchar("approved_by", { length: 128 }), // FK to userTable.id, nullable
-		created_at: date("created_at").notNull(),
+		created_at: date("created_at").$defaultFn(() => new Date()).notNull(),
 		approved_at: date("approved_at"),
 	},
 	(table) => ({
