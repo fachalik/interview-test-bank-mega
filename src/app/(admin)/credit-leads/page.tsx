@@ -6,7 +6,7 @@ import CreditLeads from "@/features/credit-leads";
 import { getPagination } from "@/lib/pagination";
 import { aliasedTable, and, eq, like, sql } from "drizzle-orm";
 import { Metadata } from "next";
-import { getServerSession, Session } from "next-auth";
+import { getServerSession } from "next-auth";
 import { Suspense } from "react";
 
 // Extend the Session type to include 'id' on user
@@ -14,6 +14,7 @@ declare module "next-auth" {
 	interface Session {
 		user?: {
 			id?: string | number;
+			role?: string | null;
 			name?: string | null;
 			email?: string | null;
 			image?: string | null;
@@ -44,6 +45,8 @@ export default async function SupersetDashboardPage({ searchParams }: Props) {
 	// console.log("session", session.user?.id);
 
 	const userId = session.user?.id ?? null;
+	const role = session.user?.role ?? null;
+
 	const page = Number(params.page) || 1;
 	const size = Number(params.size) || 10;
 	const search = params.search;
@@ -51,7 +54,7 @@ export default async function SupersetDashboardPage({ searchParams }: Props) {
 	const { limit, offset } = getPagination({ page, pageSize: size });
 
 	const filters = [];
-	if (userId) {
+	if (userId && role === "user") {
 		filters.push(eq(creditsLeadsTable.created_by, userId.toString()));
 	}
 	if (search) {

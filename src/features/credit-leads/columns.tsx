@@ -7,13 +7,15 @@ import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
 import { formatCurrency } from "@/lib/format-currency";
 import { ColumnDef } from "@tanstack/react-table";
-import { Eye, PencilIcon, Trash2Icon } from "lucide-react";
+import { Check, Eye, PencilIcon, Trash2Icon } from "lucide-react";
 import { Data } from ".";
 
 export const getColumns = (
 	handleDetail: (row: Data) => void,
 	handleEdit: (row: Data) => void,
 	handleDelete: (row: Data) => void,
+	handleApprove: (row: Data) => void,
+	role: string,
 ): ColumnDef<Data>[] => [
 	{
 		id: "Customer Name",
@@ -110,6 +112,20 @@ export const getColumns = (
 		size: 120,
 		cell: ({ row }) => (
 			<div className="flex gap-2.5">
+				{role != "user" && (
+					<TooltipComponent content="Approve" side="top">
+						<Button
+							mode="icon"
+							size={"xs"}
+							className="cursor-pointer"
+							onClick={() => {
+								handleApprove(row.original);
+							}}
+						>
+							<Check className="h-4 w-4" />
+						</Button>
+					</TooltipComponent>
+				)}
 				<TooltipComponent content="View Detail" side="top">
 					<Button
 						mode="icon"

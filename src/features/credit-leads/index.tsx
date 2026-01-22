@@ -11,8 +11,10 @@ import { startTransition, useRef, useState } from "react";
 import { getColumns } from "./columns";
 
 import { DialogComponent } from "@/components/common/dialog";
+import { useUser } from "@/context/UserContext";
 import FormCreate from "./create-form";
 import FormEdit from "./edit-form";
+import useApprove from "./use-approve";
 import useDelete from "./use-delete";
 import { UrlParamsCreditLeads, useUrlParams } from "./use-search-params";
 
@@ -53,6 +55,7 @@ export default function CreditLeads({
 	totalData,
 	totalPages,
 }: IProps) {
+	const { user } = useUser();
 	const inputRef = useRef<HTMLInputElement>(null);
 	const [detailData, setDetailData] = useState<Data | null>(null);
 	const { search, sort_by, name } = searchParams;
@@ -62,6 +65,13 @@ export default function CreditLeads({
 	const { active: activeDetail, toggle: toggleDetail } = useBolean();
 
 	const { active: activeEdit, toggle: toggleEdit } = useBolean();
+
+	const {
+		active: isApproveDialogOpen,
+		toggle: toggleAprroveDialog,
+		formAction: formActionApprove,
+		isPending: isApproveUser,
+	} = useApprove();
 
 	const {
 		active: isDeleteDialogOpen,
@@ -107,6 +117,20 @@ export default function CreditLeads({
 		toggleDeleteDialog();
 	};
 
+	const handleApprove = (row: Data) => {
+		setDetailData(row);
+		toggleAprroveDialog();
+	};
+
+	const handleApproveConfirm = async () => {
+		startTransition(() => {
+			const formData = new FormData();
+			formData.append("id", detailData?.id?.toString() || "");
+			formData.append("approved_by", user?.id?.toString() || "");
+			formActionApprove(formData);
+		});
+	};
+
 	const handleDeleteConfirm = async () => {
 		startTransition(() => {
 			const formData = new FormData();
@@ -115,12 +139,20 @@ export default function CreditLeads({
 		});
 	};
 
-	const columns = getColumns(handleDetail, handleEdit, handleDelete);
+	const columns = getColumns(
+		handleDetail,
+		handleEdit,
+		handleDelete,
+		handleApprove,
+		user?.role ?? "",
+	);
+
+	console.log("user", user);
 	return (
 		<Container className="space-y-2.5">
 			<div className="flex flex-col md:flex-row justify-between md:items-center gap-2.5">
 				<h2 className="text-xl font-semibold text-gray-800 dark:text-white/90">
-					Product Category
+					Credit Leads
 				</h2>
 
 				<div className="flex space-x-2.5">
@@ -175,6 +207,28 @@ export default function CreditLeads({
 				onOpenChange={toggleEdit}
 				open={activeEdit}
 				data={detailData!}
+			/>
+
+			<DialogComponent
+				title="Approved the Credit Lead"
+				description={
+					<p>
+						Are you sure you want to approved the credit lead{" "}
+						<strong>{detailData?.customer_name}</strong>? This action cannot be
+						undone.
+					</p>
+				}
+				open={isApproveDialogOpen}
+				onOpenChange={toggleAprroveDialog}
+				onCancel={toggleAprroveDialog}
+				onConfirm={handleApproveConfirm}
+				isPending={isApproveUser}
+				textCancel="Cancel"
+				textConfirm="Approve"
+				icon={<i className="ri-check-line text-4xl text-green-600 mx-auto" />}
+				footerPosition="center"
+				confirmButtonVariant="primary"
+				cancelButtonVariant="outline"
 			/>
 
 			<DialogComponent
