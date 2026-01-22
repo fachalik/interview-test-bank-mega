@@ -127,6 +127,10 @@ export default function CreditLeads({
 			const formData = new FormData();
 			formData.append("id", detailData?.id?.toString() || "");
 			formData.append("approved_by", user?.id?.toString() || "");
+			formData.append(
+				"status",
+				detailData?.status === "approved" ? "rejected" : "approved",
+			);
 			formActionApprove(formData);
 		});
 	};
@@ -164,10 +168,12 @@ export default function CreditLeads({
 						/>
 					</InputGroup>
 
-					<Button onClick={toggleCreate}>
-						<Plus />
-						Create Credit Lead
-					</Button>
+					{user?.role !== "approver" && (
+						<Button onClick={toggleCreate}>
+							<Plus />
+							Create Credit Lead
+						</Button>
+					)}
 
 					{hasActiveFilters && (
 						<Button variant="destructive" onClick={handleClearFilters}>
@@ -212,11 +218,21 @@ export default function CreditLeads({
 			<DialogComponent
 				title="Approved the Credit Lead"
 				description={
-					<p>
-						Are you sure you want to approved the credit lead{" "}
-						<strong>{detailData?.customer_name}</strong>? This action cannot be
-						undone.
-					</p>
+					<div>
+						{detailData?.status != "approved" ? (
+							<p>
+								Are you sure you want to approved the credit lead{" "}
+								<strong>{detailData?.customer_name}</strong>? This action cannot
+								be undone.
+							</p>
+						) : (
+							<p>
+								Are you sure you want to reject the credit lead{" "}
+								<strong>{detailData?.customer_name}</strong> ? This action
+								cannot be undone
+							</p>
+						)}
+					</div>
 				}
 				open={isApproveDialogOpen}
 				onOpenChange={toggleAprroveDialog}
@@ -224,10 +240,12 @@ export default function CreditLeads({
 				onConfirm={handleApproveConfirm}
 				isPending={isApproveUser}
 				textCancel="Cancel"
-				textConfirm="Approve"
+				textConfirm={detailData?.status == "approved" ? "Reject" : "Approve"}
 				icon={<i className="ri-check-line text-4xl text-green-600 mx-auto" />}
 				footerPosition="center"
-				confirmButtonVariant="primary"
+				confirmButtonVariant={
+					detailData?.status == "approved" ? "destructive" : "primary"
+				}
 				cancelButtonVariant="outline"
 			/>
 

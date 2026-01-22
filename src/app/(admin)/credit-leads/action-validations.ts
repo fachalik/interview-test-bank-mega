@@ -26,4 +26,5 @@ export type UpdateCategory = z.infer<typeof updateSchema>;
 export const approvedSchema = z.object({
 	id: z.string().min(1, " ID is required"),
 	approved_by: z.string().min(1, "Approved by is required"),
+	status: z.string(),
 });

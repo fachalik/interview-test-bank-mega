@@ -22,7 +22,7 @@ export default function useApprove() {
 	useEffect(() => {
 		if (state?.success) {
 			toggle();
-			toast.success(state.message || "Credit Leads Approved Successfully");
+			toast.success(state.message || "Credit Leads Change Status Successfully");
 		} else if (state?.message) {
 			toast.error(state.message);
 		}

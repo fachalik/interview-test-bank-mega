@@ -95,14 +95,14 @@ export const useUrlParams = (currentParams: UrlParamsCreditLeads) => {
 	);
 
 	const handleSearchName = useCallback(
-		(name: string) => {
-			updateURL({ page: 1, name }); // Reset to page 1 when searching
+		(search: string) => {
+			updateURL({ page: 1, search }); // Reset to page 1 when searching
 		},
 		[updateURL],
 	);
 
 	const handleDebouncedSearchName = useCallback(
-		(name: string, delay: number = 500) => {
+		(search: string, delay: number = 500) => {
 			// Clear previous timeout
 			if (searchTimeoutRef.current) {
 				clearTimeout(searchTimeoutRef.current);
@@ -110,7 +110,7 @@ export const useUrlParams = (currentParams: UrlParamsCreditLeads) => {
 
 			// Set new timeout
 			searchTimeoutRef.current = setTimeout(() => {
-				handleSearchName(name);
+				handleSearchName(search);
 			}, delay);
 		},
 		[handleSearch],

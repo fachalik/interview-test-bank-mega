@@ -191,6 +191,7 @@ export async function ApproveCreditLeads(
 		const rawData = {
 			id: formData.get("id") as string,
 			approved_by: formData.get("approved_by") as string,
+			status: formData.get("status") as string,
 		};
 
 		const validatedFields = approvedSchema.safeParse(rawData);
@@ -203,13 +204,13 @@ export async function ApproveCreditLeads(
 			};
 		}
 
-		const { id, approved_by } = validatedFields.data;
+		const { id, approved_by, status } = validatedFields.data;
 
 		const response = await updateCreditLeads({
 			id,
 			data: {
-				approved_by,
-				status: "approved",
+				approved_by: status !== "rejected" ? approved_by : null,
+				status,
 			},
 		});
 

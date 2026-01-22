@@ -7,7 +7,7 @@ import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
 import { formatCurrency } from "@/lib/format-currency";
 import { ColumnDef } from "@tanstack/react-table";
-import { Check, Eye, PencilIcon, Trash2Icon } from "lucide-react";
+import { Check, CircleOff, Eye, PencilIcon, Trash2Icon } from "lucide-react";
 import { Data } from ".";
 
 export const getColumns = (
@@ -113,7 +113,14 @@ export const getColumns = (
 		cell: ({ row }) => (
 			<div className="flex gap-2.5">
 				{role != "user" && (
-					<TooltipComponent content="Approve" side="top">
+					<TooltipComponent
+						content={
+							row?.original?.status == "approved"
+								? "Reject Data"
+								: "Approved Data"
+						}
+						side="top"
+					>
 						<Button
 							mode="icon"
 							size={"xs"}
@@ -121,56 +128,70 @@ export const getColumns = (
 							onClick={() => {
 								handleApprove(row.original);
 							}}
+							variant={
+								row?.original?.status != "approved" ? "primary" : "destructive"
+							}
 						>
-							<Check className="h-4 w-4" />
+							{row?.original?.status != "approved" ? (
+								<Check className="h-4 w-4" />
+							) : (
+								<CircleOff className="h-4 w-4" />
+							)}
 						</Button>
 					</TooltipComponent>
 				)}
-				<TooltipComponent content="View Detail" side="top">
-					<Button
-						mode="icon"
-						size={"xs"}
-						className="cursor-pointer"
-						onClick={() => {
-							handleDetail(row.original);
-						}}
-					>
-						<Eye className="h-4 w-4" />
-					</Button>
-				</TooltipComponent>
 
-				<TooltipComponent content="Edit" side="top">
-					<Button
-						mode="icon"
-						size={"xs"}
-						className="cursor-pointer"
-						onClick={() => {
-							handleEdit(row.original);
-						}}
-						disabled={
-							row?.original.status !== "rejected" &&
-							row?.original.status !== "pending"
-						}
-					>
-						<PencilIcon className="h-4 w-4" />
-					</Button>
-				</TooltipComponent>
+				{role != "approver" && (
+					<TooltipComponent content="View Detail" side="top">
+						<Button
+							mode="icon"
+							size={"xs"}
+							className="cursor-pointer"
+							onClick={() => {
+								handleDetail(row.original);
+							}}
+						>
+							<Eye className="h-4 w-4" />
+						</Button>
+					</TooltipComponent>
+				)}
 
-				<TooltipComponent content="Delete" side="top">
-					<Button
-						type="button"
-						mode="icon"
-						size={"xs"}
-						className="cursor-pointer"
-						variant="destructive"
-						onClick={() => {
-							handleDelete(row.original);
-						}}
-						disabled={row?.original.status !== "pending"}
-					>
-						<Trash2Icon className="h-4 w-4" />
-					</Button>
-				</TooltipComponent>
+				{role != "approver" && (
+					<TooltipComponent content="Edit" side="top">
+						<Button
+							mode="icon"
+							size={"xs"}
+							className="cursor-pointer"
+							onClick={() => {
+								handleEdit(row.original);
+							}}
+							disabled={
+								row?.original.status !== "rejected" &&
+								row?.original.status !== "pending"
+							}
+						>
+							<PencilIcon className="h-4 w-4" />
+						</Button>
+					</TooltipComponent>
+				)}
+
+				{role != "approver" && (
+					<TooltipComponent content="Delete" side="top">
+						<Button
+							type="button"
+							mode="icon"
+							size={"xs"}
+							className="cursor-pointer"
+							variant="destructive"
+							onClick={() => {
+								handleDelete(row.original);
+							}}
+							disabled={row?.original.status !== "pending"}
+						>
+							<Trash2Icon className="h-4 w-4" />
+						</Button>
+					</TooltipComponent>
+				)}
 			</div>
 		),
 		meta: {
