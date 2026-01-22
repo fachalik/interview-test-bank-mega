@@ -1,0 +1,17 @@
+node_modules
+.pnpm-debug.log
+.DS_Store
+*.log
+*.tsbuildinfo
+.next
+out
+dist
+build
+coverage
+.vscode
+.idea
+*.local
+*.tmp
+*.bak
+*.swp
+*.swo

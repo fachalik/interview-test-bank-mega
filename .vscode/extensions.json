@@ -1,0 +1,4 @@
+{
+	"recommendations": ["biomejs.biome", "codeforge.remix-forge"],
+	"unwantedRecommendations": ["esbenp.prettier-vscode"]
+}

@@ -1,0 +1,7 @@
+export enum EnumStatus {
+	FAILED = "FAILED",
+	TRAINED = "TRAINED",
+	DEPLOYED = "DEPLOYED",
+	MISSING = "MISSING",
+	PROCESSING = "PROCESSING",
+}
