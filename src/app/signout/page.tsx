@@ -10,15 +10,15 @@ export default function SignOut() {
 
 	const logout = useCallback(async () => {
 		try {
-			await signOut({ redirect: false, callbackUrl: "/signin" });
-			window.location.href = "/signin";
+			await signOut({ redirect: false, callbackUrl: "/" });
+			window.location.href = "/";
 		} catch (error) {
 			logger.error("Logout failed:", error);
 		}
 	}, []);
 
 	const navigate = () => {
-		window.location.replace("/signin");
+		window.location.replace("/");
 	};
 
 	// biome-ignore lint/correctness/useExhaustiveDependencies: navigate and logout are defined in useCallback

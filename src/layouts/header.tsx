@@ -3,10 +3,8 @@
 import { usePathname } from "next/navigation";
 import { useState } from "react";
 
-// import { Container } from "@/components/common/container";
 import { Button } from "@/components/ui/button";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
-// import { useUser } from "~/features/auth/context/UserContext";
 import { useIsMobile } from "@/hooks/use-mobile";
 
 import { Container } from "@/components/common/container";
@@ -20,7 +18,6 @@ import {
 import NavFooter from "./nav-footer";
 import NavHeader from "./nav-header";
 import { NavMain } from "./nav-main";
-// import { SidebarMenu } from "./sidebar-menu";
 
 const Header = () => {
 	const pathname = usePathname();

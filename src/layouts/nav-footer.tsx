@@ -12,7 +12,7 @@ export default function NavFooter() {
 			)}
 		>
 			<NavUser />
-			{open && <p className="text-xs">© 2025 Skyworx Creative Team.</p>}
+			{open && <p className="text-xs">© 2025 Bank Mega Interview Test.</p>}
 		</div>
 	);
 }

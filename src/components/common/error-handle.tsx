@@ -115,7 +115,7 @@ export default function ErrorHandler({ status }: ResponseHandlerProps) {
 			</Empty>
 
 			<p className="absolute bottom-6 left-1/2 -translate-x-1/2 text-center text-sm text-gray-500 dark:text-gray-400">
-				&copy; {new Date().getFullYear()} - PT. Skyworx Indonesia
+				&copy; {new Date().getFullYear()} - Bank Mega Interview Test
 			</p>
 		</div>
 	);

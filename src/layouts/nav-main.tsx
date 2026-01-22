@@ -21,9 +21,9 @@ import {
 	SidebarMenuSubButton,
 	SidebarMenuSubItem,
 } from "@/components/ui/sidebar";
-// import { useUser } from "@/context/UserContext";
+import { useUser } from "@/context/UserContext";
 import type { Menu } from "./config.menu";
-import { configMenu } from "./config.menu";
+import { configMenuAdmin, configMenuUser } from "./config.menu";
 
 /**
  * Navigation item structure
@@ -38,17 +38,23 @@ import { configMenu } from "./config.menu";
  */
 export function NavMain() {
 	const pathname = usePathname();
-	// const { user } = useUser();
+	const { user } = useUser();
 
-	const menus = configMenu;
-	// const { menus } = user ?? { menus: [] };
-	/**
-	 * Determine whether a path should be considered active.
-	 * Matches exact path or as a prefix followed by a slash:
-	 * - path === pathname
-	 * - pathname.startsWith(path + "/")
-	 * This avoids partial matches like "/app" matching "/appsomething".
-	 */
+	const menu = () => {
+		switch (user?.role) {
+			case "admin":
+				return configMenuAdmin;
+			case "user":
+				return configMenuUser;
+			case "approver":
+				return configMenuUser;
+			default:
+				return [];
+		}
+	};
+
+	const menus = menu();
+
 	const isActive = useCallback(
 		(path: string) => {
 			if (!path) return false;

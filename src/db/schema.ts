@@ -3,13 +3,20 @@ import { relations } from "drizzle-orm";
 import {
 	date,
 	index,
+	mysqlEnum,
 	mysqlTable,
 	uniqueIndex,
 	varchar,
-	mysqlEnum,
 } from "drizzle-orm/mysql-core";
 
 export const roleEnum = mysqlEnum("role", ["approver", "user", "admin"]);
+
+export enum RoleType {
+	approver = "approver",
+	user = "user",
+	admin = "admin",
+}
+// export type RoleType = typeof roleEnum.$type;
 
 export const userTable = mysqlTable(
 	"user",
@@ -22,7 +29,9 @@ export const userTable = mysqlTable(
 		email: varchar("email", { length: 255 }).notNull(),
 		password_hash: varchar("password_hash", { length: 255 }).notNull(),
 		role: roleEnum.notNull(),
-		created_at: date("created_at").notNull(),
+		created_at: date("created_at")
+			.$defaultFn(() => new Date())
+			.notNull(),
 	},
 	(table) => ({
 		usernameUnique: uniqueIndex("uq_user_username").on(table.username),
@@ -30,7 +39,7 @@ export const userTable = mysqlTable(
 	}),
 );
 
-export type User = typeof userTable.$inferSelect;
+export type User = Omit<typeof userTable.$inferSelect, "password_hash">;
 
 export const creditsLeadsTable = mysqlTable(
 	"credits_leads",

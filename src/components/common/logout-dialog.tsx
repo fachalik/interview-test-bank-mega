@@ -26,9 +26,9 @@ export function LogoutDialog({ open, onClose, onSuccess }: LogoutDialogProps) {
 	const handleLogout = useCallback(async () => {
 		try {
 			setIsLoading(true);
-			await signOut({ redirect: false, callbackUrl: "/signin" });
+			await signOut({ redirect: false, callbackUrl: "/" });
 			onSuccess?.();
-			window.location.href = "/signin";
+			window.location.href = "/";
 		} catch (error) {
 			logger.error("Logout failed:", error);
 		} finally {

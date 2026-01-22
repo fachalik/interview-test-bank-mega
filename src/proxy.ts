@@ -12,7 +12,7 @@ export default withAuth(
 
 		// Redirect authenticated users away from public pages
 		if (isAuthenticated) {
-			if (pathname === "/" || pathname === "/signin") {
+			if (pathname === "/") {
 				return NextResponse.redirect(new URL("/dashboard", req.url));
 			}
 			return NextResponse.next();
@@ -24,7 +24,7 @@ export default withAuth(
 		}
 
 		// Redirect unauthenticated users to signin for protected routes
-		return NextResponse.redirect(new URL("/signin", req.url));
+		return NextResponse.redirect(new URL("/", req.url));
 	},
 	{
 		callbacks: {
@@ -34,12 +34,12 @@ export default withAuth(
 	},
 );
 
-const publicPaths = ["/", "/signin", "/signup", "/forgot-password"];
+const publicPaths = ["/", "/signup", "/forgot-password"];
 
 function publicRoute(pathname: string) {
 	return publicPaths.some((path) => pathname === path);
 }
 
 export const config = {
-	matcher: ["/", "/signin", "/signup", "/forgot-password", "/app/:path*"],
+	matcher: ["/", "/signup", "/forgot-password", "/app/:path*"],
 };
