@@ -1,7 +1,7 @@
 "use server";
 
-import { authOptions } from "@/app/api/auth/[...nextauth]/route";
-import { getServerSession } from "next-auth/next";
+// import { authOptions } from "@/app/api/auth/[...nextauth]/route";
+// import { getServerSession } from "next-auth/next";
 // import { signOut } from "next-auth/react";
 import {
 	APIError,
@@ -46,9 +46,9 @@ export async function request<T>(
 	}
 
 	// Get session from NextAuth
-	const session = await getServerSession(authOptions);
-	const access_token = session?.access_token as string | undefined;
-	const refresh_token = session?.refresh_token as string | undefined;
+	// const session = await getServerSession(authOptions);
+	// const access_token = session?.access_token as string | undefined;
+	// const refresh_token = session?.refresh_token as string | undefined;
 
 	// Build headers
 	const reqHeaders = new Headers(headers);
@@ -58,8 +58,8 @@ export async function request<T>(
 		reqHeaders.set("Content-Type", "application/json");
 	}
 
-	if (requireAuth && access_token) {
-		reqHeaders.set("Authorization", `Bearer ${access_token}`);
+	if (requireAuth) {
+		reqHeaders.set("Authorization", `Bearer `);
 	}
 
 	// Prepare request body
@@ -71,7 +71,7 @@ export async function request<T>(
 	}
 
 	// Send initial request
-	let res = await fetch(url, {
+	const res = await fetch(url, {
 		...rest,
 		headers: reqHeaders,
 		body,
@@ -79,31 +79,31 @@ export async function request<T>(
 	});
 
 	// Handle expired token → try refresh
-	if ((res.status === 401 || res.status === 403) && refresh_token) {
-		const newToken = await refreshAccessToken(refresh_token);
-		logger.log("Refreshed token:", newToken);
+	// if ((res.status === 401 || res.status === 403) && refresh_token) {
+	// 	const newToken = await refreshAccessToken(refresh_token);
+	// 	logger.log("Refreshed token:", newToken);
 
-		if (newToken) {
-			// Update headers with new token
-			reqHeaders.set("Authorization", `Bearer ${newToken}`);
+	// 	if (newToken) {
+	// 		// Update headers with new token
+	// 		reqHeaders.set("Authorization", `Bearer ${newToken}`);
 
-			// Retry the original request
-			res = await fetch(url, {
-				...rest,
-				headers: reqHeaders,
-				body,
-				cache: "no-store",
-			});
-		}
+	// 		// Retry the original request
+	// 		res = await fetch(url, {
+	// 			...rest,
+	// 			headers: reqHeaders,
+	// 			body,
+	// 			cache: "no-store",
+	// 		});
+	// 	}
 
-		if (newToken === null || !newToken) {
-			redirect("/signout");
-		}
-	}
+	// 	if (newToken === null || !newToken) {
+	// 		redirect("/signout");
+	// 	}
+	// }
 
-	if ((res.status === 401 || res.status === 403) && !refresh_token) {
-		redirect("/signout");
-	}
+	// if ((res.status === 401 || res.status === 403) && !refresh_token) {
+	// 	redirect("/signout");
+	// }
 
 	if (!res.ok) {
 		let mapData: Record<string, string[]> = {};
@@ -267,22 +267,22 @@ export async function* readJSONStream<T>(stream: ReadableStream<Uint8Array>) {
 	}
 }
 
-async function refreshAccessToken(
-	refresh_token: string,
-): Promise<string | null> {
-	try {
-		const res = await fetch(`${API_URL}/api/v1/security/refresh`, {
-			method: "POST",
-			headers: { "Content-Type": "application/json" },
-			body: JSON.stringify({ refresh_token: refresh_token }),
-			cache: "no-store",
-		});
+// async function refreshAccessToken(
+// 	refresh_token: string,
+// ): Promise<string | null> {
+// 	try {
+// 		const res = await fetch(`${API_URL}/api/v1/security/refresh`, {
+// 			method: "POST",
+// 			headers: { "Content-Type": "application/json" },
+// 			body: JSON.stringify({ refresh_token: refresh_token }),
+// 			cache: "no-store",
+// 		});
 
-		if (!res.ok) return null;
-		const data = await res.json();
-		return data.access_token;
-	} catch {
-		logger.error("Failed to refresh token");
-		return null;
-	}
-}
+// 		if (!res.ok) return null;
+// 		const data = await res.json();
+// 		return data.access_token;
+// 	} catch {
+// 		logger.error("Failed to refresh token");
+// 		return null;
+// 	}
+// }
